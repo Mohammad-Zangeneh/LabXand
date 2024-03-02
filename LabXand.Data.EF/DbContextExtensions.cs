@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace LabXand.Infrastructure.Data.EF.UpdateConfiguration
+namespace LabXand.Data.EF
 {
     public static class DbContextExtensions
     {

@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace LabXand.Data
+﻿namespace LabXand.Data
 {
     public abstract class NavigationPropertyUpdaterCustomizerBase<TRoot> : INavigationPropertyUpdaterCustomizer<TRoot>
         where TRoot : class

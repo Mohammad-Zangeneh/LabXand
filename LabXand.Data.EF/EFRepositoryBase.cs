@@ -1,4 +1,7 @@
-﻿namespace LabXand.SharedKernel
+﻿using LabXand.SharedKernel;
+using Microsoft.EntityFrameworkCore;
+
+namespace LabXand.Data.EF
 {
     public class EFRepositoryBase<TAgregateRoot, TIdentifier>(DbContext dbContext) : IRepository<TAgregateRoot, TIdentifier>
         where TIdentifier : struct

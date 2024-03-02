@@ -1,8 +1,7 @@
 ﻿namespace LabXand.SharedKernel
 {
-    public interface IRepository<TAgregateRoot, TIdentifier>
-        where TIdentifier : struct 
-        where TAgregateRoot : IAgregateRoot<TIdentifier> 
+    public interface IRepository<TAgregateRoot>
+        where TAgregateRoot : IAgregateRoot 
     {
         IQueryable<TAgregateRoot> Query { get; }
         void Add(TAgregateRoot domain);

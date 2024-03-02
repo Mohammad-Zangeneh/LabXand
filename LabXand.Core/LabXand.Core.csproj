@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LabXand.Core\LabXand.Core.csproj" />
+    <PackageReference Include="Ardalis.GuardClauses" Version="4.5.0" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace LabXand.Infrastructure.Data.EF.UpdateConfiguration
+namespace LabXand.Data.EF
 {
     internal class RootNavigationPropertyUpdater<TRoot>(INavigationPropertyUpdaterCustomizer<TRoot> propertyUpdaterCustomizer, IUpdateConfiguration<TRoot> configuration) : NavigationPropertyUpdaterBase<TRoot>(propertyUpdaterCustomizer)
         where TRoot : class
