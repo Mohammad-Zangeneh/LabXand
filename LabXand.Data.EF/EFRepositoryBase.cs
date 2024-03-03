@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabXand.Data.EF
 {
-    public class EFRepositoryBase<TAgregateRoot, TIdentifier>(DbContext dbContext) : IRepository<TAgregateRoot, TIdentifier>
+    public class EFRepositoryBase<TAgregateRoot, TIdentifier>(DbContext dbContext) : IRepository<TAgregateRoot>
         where TIdentifier : struct
-        where TAgregateRoot : class, IAgregateRoot<TIdentifier>
+        where TAgregateRoot : class, IAgregateRoot
     {
         protected readonly DbContext dbContext = dbContext;
 
