@@ -3,18 +3,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabXand.Data.EF
 {
-    public class EFRepositoryBase<TAgregateRoot, TIdentifier>(DbContext dbContext) : IRepository<TAgregateRoot>
+    public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) : IRepository<TAggregateRoot>
         where TIdentifier : struct
-        where TAgregateRoot : class, IAggregateRoot
+        where TAggregateRoot : class, IAggregateRoot
     {
         protected readonly DbContext dbContext = dbContext;
 
-        public IQueryable<TAgregateRoot> Query => dbContext.Set<TAgregateRoot>();
+        public IQueryable<TAggregateRoot> Query => dbContext.Set<TAggregateRoot>();
 
-        public void Add(TAgregateRoot domain) => dbContext.Set<TAgregateRoot>().Add(domain);
+        public void Add(TAggregateRoot domain) => dbContext.Set<TAggregateRoot>().Add(domain);
 
-        public void Edit(TAgregateRoot domain) => dbContext.Entry(domain).State = EntityState.Modified;
+        public void Edit(TAggregateRoot domain) => dbContext.Entry(domain).State = EntityState.Modified;
 
-        public void Remove(TAgregateRoot domain) => dbContext.Set<TAgregateRoot>().Remove(domain);        
+        public void Remove(TAggregateRoot domain) => dbContext.Set<TAggregateRoot>().Remove(domain);        
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace LabXand.SharedKernel
 {
-    public interface IApplicationService<TAgregateRoot>
-        where TAgregateRoot : IAggregateRoot
+    public interface IApplicationService<TAggregateRoot>
+        where TAggregateRoot : IAggregateRoot
     { 
 
     }
