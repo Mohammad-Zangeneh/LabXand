@@ -1,7 +1,7 @@
 ﻿namespace LabXand.SharedKernel
 {
     public interface IDomainService<TAgregateRoot, TIdentifier> 
-        where TAgregateRoot : IAgregateRoot
+        where TAgregateRoot : IAggregateRoot
         where TIdentifier : struct
     {
         TAgregateRoot Create(TAgregateRoot agregate);

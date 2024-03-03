@@ -1,4 +1,4 @@
 ﻿namespace LabXand.SharedKernel
 {
-    public interface IAgregateRoot;
+    public interface IAggregateRoot;
 }
