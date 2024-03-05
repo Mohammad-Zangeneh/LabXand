@@ -17,6 +17,6 @@ namespace LabXand.Data
             : this(new EmptyPropertyUpdaterCustomizer<TRoot>(), [])
         {
         }
-        public Expression<Func<TRoot, ICollection<T>>> ItemSelector { get; set; }
+        public Expression<Func<TRoot, IList<T>>> ItemSelector { get; set; }
     }
 }

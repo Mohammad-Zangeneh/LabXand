@@ -1,19 +1,14 @@
-﻿using LabXand.Core;
-using LabXand.SharedKernel;
+﻿using LabXand.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabXand.Data.EF
 {
-    internal class CollectionNavigationPropertyUpdater<TRoot, T, I>(DbContext dbContext, INavigationPropertyUpdaterCustomizer<TRoot> propertyUpdaterCustomizer, UpdateCollectionConfiguration<TRoot, T, I> updateConfig) : NavigationPropertyUpdaterBase<TRoot>(propertyUpdaterCustomizer)
+    internal class OneToManyNavigationPropertyUpdater<TRoot, T, I>(DbContext dbContext, OneToManyUpdateConfiguration<TRoot, T, I> updateConfig) :
+        EFNavigationPropertyUpdaterBase<TRoot, OneToManyUpdateConfiguration<TRoot, T, I>>(dbContext, updateConfig)
         where TRoot : class
         where T : class, IEntity<I>
         where I : struct
     {
-        public CollectionNavigationPropertyUpdater(UpdateCollectionConfiguration<TRoot, T, I> updateConfig)
-            : this(new EmptyPropertyUpdaterCustomizer<TRoot>(), updateConfig)
-        {
-        }
-
         protected ICollection<T> GetListValue(TRoot parent)
         {
             if (updateConfig.ItemSelector != null)
@@ -52,15 +47,9 @@ namespace LabXand.Data.EF
                 }
                 else
                 {
-                    if (!string.IsNullOrWhiteSpace(updateConfig.ParentPropertyName))
-                        TypeHelper.SetPropertyValue(originalValue, updateConfig.ParentPropertyName, null);
-
-                    if (!string.IsNullOrWhiteSpace(updateConfig.ChildtPropertyName))
-                        TypeHelper.SetPropertyValue(originalValue, updateConfig.ChildtPropertyName, null);
-
-                    PropertyUpdaterCustomizer.OnBeforRemoveEntity(context, rootOriginalValue, originalValue).Invoke(context, rootOriginalValue, originalValue); ;
+                    //PropertyUpdaterCustomizer.OnBeforRemoveEntity(context, rootOriginalValue, originalValue).Invoke(context, rootOriginalValue, originalValue); ;
                     dbContext.Entry(originalValue).State = EntityState.Deleted;
-                    PropertyUpdaterCustomizer.OnAfterRemoveEntity(context, rootOriginalValue, originalValue).Invoke(context, rootOriginalValue, originalValue); ;
+                    //PropertyUpdaterCustomizer.OnAfterRemoveEntity(context, rootOriginalValue, originalValue).Invoke(context, rootOriginalValue, originalValue); ;
                 }
             }
             // مشخص کردن مواردی که جدید هستند و باید اضافه شوند
@@ -72,9 +61,9 @@ namespace LabXand.Data.EF
             {
                 var temp = tempArray.FirstOrDefault(o => o.Id.Equals(item.Id));
                 if (temp != null) continue;
-                PropertyUpdaterCustomizer.OnBeforAddEntity(rootCurrentValue, item).Invoke(rootCurrentValue, item);
+                //PropertyUpdaterCustomizer.OnBeforAddEntity(rootCurrentValue, item).Invoke(rootCurrentValue, item);
                 dbContext.Entry(item).State = EntityState.Added;
-                PropertyUpdaterCustomizer.OnAfterAddEntity(rootCurrentValue, item).Invoke(rootCurrentValue, item);
+                //PropertyUpdaterCustomizer.OnAfterAddEntity(rootCurrentValue, item).Invoke(rootCurrentValue, item);
             }
         }
     }
