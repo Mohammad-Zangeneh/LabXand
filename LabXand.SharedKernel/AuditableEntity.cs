@@ -1,6 +1,8 @@
 ﻿namespace LabXand.SharedKernel
 {
-    public class AuditableEntity<TIdentifier> : EntityBase<TIdentifier>
-        where TIdentifier : struct
-    { }
+    public interface IAuditData;
+    public interface IAuditableEntity<TAuditData> where TAuditData : IAuditData
+    {
+        void SetAuditData(TAuditData auditData);
+    }
 }
