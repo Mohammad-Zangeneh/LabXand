@@ -3,16 +3,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabXand.Data.EF
 {
-    public static class RepositoryExtender
-    {
-        public static void Edit<T>(this IRepository<T> repository) where T : IAgregateRoot 
-        {
-        }
-    }
-    public class UpdateConfiguration
-    {
+    //public static class RepositoryExtender
+    //{
+    //    public static void Edit<T>(this IRepository<T> repository) where T : IAgregateRoot 
+    //    {
+    //    }
+    //}
+    //public class UpdateConfiguration
+    //{
 
-    }
+    //}
     internal class ManyToManyNavigationPropertyUpdater<TRoot, T, I>(DbContext dbContext, ManyToManyUpdateConfiguration<TRoot, T, I> updateConfig) :
         EFNavigationPropertyUpdaterBase<TRoot, ManyToManyUpdateConfiguration<TRoot, T, I>>(dbContext, updateConfig)
         where TRoot : class
@@ -55,8 +55,8 @@ namespace LabXand.Data.EF
                         foreach (var updateConfig in updateConfiguration.InnerConfigurations)
                         {
                             IUpdateConfiguration<T> tempconfig = updateConfig as IUpdateConfiguration<T>;
-                            if (tempconfig != null)
-                                tempconfig.CreateUpdater().Update(dbContext, currentValue, originalValue);
+                            //if (tempconfig != null)
+                            //    tempconfig.CreateUpdater().Update(dbContext, currentValue, originalValue);
                         }
                     }
                 }

@@ -45,8 +45,8 @@ namespace LabXand.Infrastructure.Data.EF.UpdateConfiguration
                     {
                         foreach (var updateConfig in updateConfiguration.InnerConfigurations)
                         {
-                            if (updateConfig is IUpdateConfiguration<T> tempconfig)
-                                tempconfig.CreateUpdater().Update(dbContext, current, original);
+                            //if (updateConfig is IUpdateConfiguration<T> tempconfig)
+                            //    tempconfig.CreateUpdater().Update(dbContext, current, original);
                         }
                     }
                 }

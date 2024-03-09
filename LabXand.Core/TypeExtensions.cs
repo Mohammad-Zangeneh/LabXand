@@ -216,7 +216,7 @@ namespace LabXand.Core
             return typeof(TType).IsAssignableFrom(type);
         }
 
-        public static MemberInfo GetSingleMember(this Type type, string name, MemberTypes memberTypes)
+        public static MemberInfo? GetSingleMember(this Type type, string name, MemberTypes memberTypes)
         {
             return type.GetSingleMember(
                 name,
@@ -224,7 +224,7 @@ namespace LabXand.Core
                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
         }
 
-        public static MemberInfo GetSingleMember(this Type type, string name, MemberTypes memberTypes, BindingFlags bindingAttr)
+        public static MemberInfo? GetSingleMember(this Type type, string name, MemberTypes memberTypes, BindingFlags bindingAttr)
         {
             return type.GetMember(
                 name,
@@ -251,7 +251,7 @@ namespace LabXand.Core
             }
         }
 
-        public static MemberInfo GetFieldOrProperty(this Type type, string name, bool ignoreCase)
+        public static MemberInfo? GetFieldOrProperty(this Type type, string name, bool ignoreCase)
         {
             BindingFlags flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
             if (ignoreCase)

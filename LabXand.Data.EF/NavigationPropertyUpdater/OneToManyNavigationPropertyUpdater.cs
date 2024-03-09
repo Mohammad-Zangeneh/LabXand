@@ -40,8 +40,8 @@ namespace LabXand.Data.EF
                         foreach (var updateConfig in updateConfig.InnerConfigurations)
                         {
                             IUpdateConfiguration<T> tempconfig = updateConfig as IUpdateConfiguration<T>;
-                            if (tempconfig != null)
-                                tempconfig.CreateUpdater().Update(dbContext, currentValue, originalValue);
+                            //if (tempconfig != null)
+                            //    tempconfig.CreateUpdater().Update(dbContext, currentValue, originalValue);
                         }
                     }
                 }
