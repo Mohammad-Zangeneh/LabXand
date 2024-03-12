@@ -221,8 +221,6 @@ namespace LabXand.Core
                             object toValue = values[1];
                             criteria = CreateGreaterThanOrEqualCriteria<T>(propertyName, fromValue).And(CreateLessThanOrEqualCriteria<T>(propertyName, toValue));
                         }
-                        else
-                            criteria = null;
                         break;
                     case FilterOperations.Contains:
                         criteria = CreateContainsCriteria<T>(propertyName, propertyValue);
@@ -239,7 +237,7 @@ namespace LabXand.Core
                 if (filterOperation == FilterOperations.IsNotNull)
                     return CreateIsNotNullCriteria<T>(propertyName);
             }
-            return null;
+            return new EmptyCriteria();
         }
 
         //internal static Criteria<T> CreateHierarchicalCriteria<T>(object leftCriteria, object rightCriteria) where T : class
