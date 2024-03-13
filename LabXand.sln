@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LabXand.SharedKernel", "Lab
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LabXand.Data.EF", "LabXand.Data.EF\LabXand.Data.EF.csproj", "{7332531C-02D7-4392-B2BD-A78FC6CEEE82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabXand.Core", "LabXand.Core\LabXand.Core.csproj", "{DCC572F7-6BC1-4E79-948E-E2B98E2FD2B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LabXand.Core", "LabXand.Core\LabXand.Core.csproj", "{DCC572F7-6BC1-4E79-948E-E2B98E2FD2B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabXand.Security", "LabXand.Security\LabXand.Security.csproj", "{AE7A64C1-B7F5-4DB1-81C8-4BAB1FEBEA6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{DCC572F7-6BC1-4E79-948E-E2B98E2FD2B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCC572F7-6BC1-4E79-948E-E2B98E2FD2B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCC572F7-6BC1-4E79-948E-E2B98E2FD2B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE7A64C1-B7F5-4DB1-81C8-4BAB1FEBEA6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE7A64C1-B7F5-4DB1-81C8-4BAB1FEBEA6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE7A64C1-B7F5-4DB1-81C8-4BAB1FEBEA6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE7A64C1-B7F5-4DB1-81C8-4BAB1FEBEA6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
