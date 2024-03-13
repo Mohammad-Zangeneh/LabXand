@@ -29,7 +29,7 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
     public Task<int> CountAsync(IQueryable<TAggregateRoot> query, Expression<Func<TAggregateRoot, bool>> expression, CancellationToken cancellationToken)
         => query.CountAsync(expression, cancellationToken);
 
-    public Task<TAggregateRoot?> FirstOrDefaultAsync(IQueryable<TAggregateRoot> query, Expression<Func<TAggregateRoot, bool>> expression, CancellationToken cancellationToken)
+    public Task<TAggregateRoot?> GetAsync(IQueryable<TAggregateRoot> query, Expression<Func<TAggregateRoot, bool>> expression, CancellationToken cancellationToken)
         => query.Where(expression).FirstOrDefaultAsync(cancellationToken);
 
     public Task<List<TAggregateRoot>> GetPaginatedItemsAsync(IQueryable<TAggregateRoot> query, Expression<Func<TAggregateRoot, bool>> expression, int page, int size, CancellationToken cancellationToken)
