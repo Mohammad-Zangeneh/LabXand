@@ -6,6 +6,6 @@
     {
         void Add(TAggregateRoot domain);
         void Edit(TAggregateRoot domain);
-        void Remove(TAggregateRoot domain);
+        Task RemoveAsync(TIdentifier identifier, CancellationToken cancellationToken);
     }
 }

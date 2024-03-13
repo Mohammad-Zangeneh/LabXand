@@ -4,5 +4,6 @@
     {
         TIdentifier Id { get; }
         IList<IDomainEvent> Events { get; }
+        string DescribeEntity();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using LabXand.SharedKernel;
+using LabXand.SharedKernel.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -17,7 +18,13 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
         dbContext.Attach(domain);
         dbContext.Entry(domain).State = EntityState.Modified;
     }
-    public virtual void Remove(TAggregateRoot domain) => dbContext.Set<TAggregateRoot>().Remove(domain);
+    public virtual async Task RemoveAsync(TIdentifier id, CancellationToken cancellationToken)
+    {
+        var entity = await dbContext.Set<TAggregateRoot>().FindAsync(id, cancellationToken);
+        if (entity is null)
+            ExceptionManager.EntityNotFound<TAggregateRoot, TIdentifier>(id);
+        dbContext.Set<TAggregateRoot>().Remove(entity);
+    }
 
     public Task<int> CountAsync(IQueryable<TAggregateRoot> query, Expression<Func<TAggregateRoot, bool>> expression, CancellationToken cancellationToken)
         => query.CountAsync(expression, cancellationToken);

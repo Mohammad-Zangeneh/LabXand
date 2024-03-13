@@ -172,12 +172,12 @@ namespace LabXand.Core
             Guard.Against.Null(o, "o");
 
             ICustomAttributeProvider attributeProvider = o as ICustomAttributeProvider;
+            Type valueType = o.GetType();
 
             // object passed in isn't an attribute provider
             // if value is an enum value, get value field member, otherwise get values type
             if (attributeProvider == null)
             {
-                Type valueType = o.GetType();
 
                 if (valueType.IsEnum)
                     attributeProvider = valueType.GetField(o.ToString());
@@ -189,9 +189,16 @@ namespace LabXand.Core
 
             if (descriptionAttribute != null)
                 return descriptionAttribute.Description;
-            throw new Exception($"No DescriptionAttribute on '{o.GetType()}'.");
+            return nameof(valueType);
         }
 
+        public static string GetClassDescription<T>() => GetDescription(typeof(T));
+
+        public static string GetClassDescription(Type type) 
+        {
+            var descriptionAttribute = type.GetCustomAttribute<DescriptionAttribute>();
+            return descriptionAttribute is null ? type.Name : descriptionAttribute.Description;
+        }
         public static IList<string> GetDescriptions(IList values)
         {
             Guard.Against.Null(values, "values");
@@ -206,7 +213,7 @@ namespace LabXand.Core
             return descriptions;
         }
 
-      
+
         public static Type GetSequenceType(Type elementType)
         {
             return typeof(IEnumerable<>).MakeGenericType(elementType);
@@ -229,7 +236,7 @@ namespace LabXand.Core
         public static void RegisterTypeConverter<T, TC>() where TC : TypeConverter
         {
             TypeDescriptor.AddAttributes(typeof(T), new TypeConverterAttribute(typeof(TC)));
-        }       
+        }
 
         private static void SetPropertyValue(object inputObject, object value, PropertyInfo property)
         {
