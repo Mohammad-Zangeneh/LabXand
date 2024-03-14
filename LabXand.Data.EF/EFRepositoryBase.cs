@@ -37,4 +37,23 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
 
     public Task<List<TAggregateRoot>> GetListAsync(IQueryable<TAggregateRoot> query, Expression<Func<TAggregateRoot, bool>> expression, CancellationToken cancellationToken)
         => query.Where(expression).ToListAsync(cancellationToken);
+
+    public Task<TResult?> GetAsync<TResult>(IQueryable<TResult> query, CancellationToken cancellationToken)
+        where TResult : class 
+        => query.FirstOrDefaultAsync(cancellationToken);
+
+    public Task<List<TResult>> GetPaginatedItemsAsync<TResult>(IQueryable<TResult> query, int page, int size, CancellationToken cancellationToken)
+        where TResult : class 
+        => query.Skip((page - 1) * size).Take(size).ToListAsync(cancellationToken);
+
+    public Task<List<TResult>> GetListAsync<TResult>(IQueryable<TResult> query, CancellationToken cancellationToken)
+        where TResult : class
+        => query.ToListAsync(cancellationToken);
+
+    public async Task<TAggregateRoot?> GetByIdAsync(TIdentifier identifier, CancellationToken cancellationToken) => 
+        await dbContext.Set<TAggregateRoot>().FindAsync([identifier], cancellationToken: cancellationToken);
+
+    public async Task<TResult?> GetByIdAsync<TResult, TId>(TId identifier, CancellationToken cancellationToken)
+        where TResult : class
+        => await dbContext.Set<TResult>().FindAsync([identifier], cancellationToken: cancellationToken);
 }
