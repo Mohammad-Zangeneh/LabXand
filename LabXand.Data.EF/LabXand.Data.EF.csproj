@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	  <Version>1.0.7</Version>
+	  <Version>1.0.10</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\LabXand.Core\LabXand.Core.csproj" />
     <ProjectReference Include="..\LabXand.Data\LabXand.Data.csproj" />
+    <ProjectReference Include="..\LabXand.Security\LabXand.Security.csproj" />
     <ProjectReference Include="..\LabXand.SharedKernel\LabXand.SharedKernel.csproj" />
   </ItemGroup>
 

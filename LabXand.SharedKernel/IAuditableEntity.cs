@@ -1,8 +1,7 @@
 ﻿namespace LabXand.SharedKernel;
 
-public interface IAuditableEntity<TAuditData> where TAuditData : IAuditData
+public interface IAuditableEntity<TUserContext> 
 {
-    void SetCreationAuditData(TAuditData auditData);
-    void SetModificationAuditData(TAuditData auditData);
-    void SetDeletionAuditData(TAuditData auditData);
+    void SetCreationAuditData(TUserContext userContext);
+    void SetModificationAuditData(TUserContext userContext);
 }
