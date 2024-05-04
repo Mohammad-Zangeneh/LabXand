@@ -3,15 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LabXand.Data", "LabXand.Data\LabXand.Data.csproj", "{80A74806-D4BD-452A-965B-00C9E56303D7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LabXand.SharedKernel", "LabXand.SharedKernel\LabXand.SharedKernel.csproj", "{BCFDC402-EAEB-4EBE-A7D8-D4698594FEC4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LabXand.Data.EF", "LabXand.Data.EF\LabXand.Data.EF.csproj", "{7332531C-02D7-4392-B2BD-A78FC6CEEE82}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LabXand.Core", "LabXand.Core\LabXand.Core.csproj", "{DCC572F7-6BC1-4E79-948E-E2B98E2FD2B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabXand.Security", "LabXand.Security\LabXand.Security.csproj", "{AE7A64C1-B7F5-4DB1-81C8-4BAB1FEBEA6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LabXand.Security", "LabXand.Security\LabXand.Security.csproj", "{AE7A64C1-B7F5-4DB1-81C8-4BAB1FEBEA6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{80A74806-D4BD-452A-965B-00C9E56303D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{80A74806-D4BD-452A-965B-00C9E56303D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{80A74806-D4BD-452A-965B-00C9E56303D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{80A74806-D4BD-452A-965B-00C9E56303D7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BCFDC402-EAEB-4EBE-A7D8-D4698594FEC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BCFDC402-EAEB-4EBE-A7D8-D4698594FEC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCFDC402-EAEB-4EBE-A7D8-D4698594FEC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
