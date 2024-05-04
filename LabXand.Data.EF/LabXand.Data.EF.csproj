@@ -8,12 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+    <Compile Remove="NavigationPropertyUpdater\**" />
+    <EmbeddedResource Remove="NavigationPropertyUpdater\**" />
+    <None Remove="NavigationPropertyUpdater\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LabXand.Core\LabXand.Core.csproj" />
-    <ProjectReference Include="..\LabXand.Data\LabXand.Data.csproj" />
     <ProjectReference Include="..\LabXand.Security\LabXand.Security.csproj" />
     <ProjectReference Include="..\LabXand.SharedKernel\LabXand.SharedKernel.csproj" />
   </ItemGroup>
