@@ -1,5 +1,4 @@
 ﻿using LabXand.SharedKernel;
-using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace LabXand.Data.EF;
@@ -22,7 +21,7 @@ public static class INavigationPropertyUpdaterExtender
         where T : class
         where T1 : class
     {
-        var rootUpdater = new RootUpdater<T>();
+        var rootUpdater = new RootUpdater<T>(GetMemberName(propertySelector));
         var updater = new OneToOneNavigationPropertyUpdater<T, T1>(rootUpdater, propertySelector);
 
         rootUpdater.AddProperty(updater);
@@ -48,7 +47,7 @@ public static class INavigationPropertyUpdaterExtender
         where T1 : class, IEntity<I>
         where I : struct
     {
-        var rootUpdater = new RootUpdater<T>();
+        var rootUpdater = new RootUpdater<T>(GetMemberName(propertySelector));
         var updater = new OneToManyNavigationPropertyUpdate<T, T1, I>(rootUpdater, propertySelector);
 
         rootUpdater.AddProperty(updater);
@@ -74,36 +73,16 @@ public static class INavigationPropertyUpdaterExtender
         where T1 : class, IEntity<I>
         where I : struct
     {
-        var rootUpdater = new RootUpdater<T>();
+        var rootUpdater = new RootUpdater<T>(GetMemberName(propertySelector));
         var updater = new ManyToManyNavigationPropertyUpdate<T, T1, I>(rootUpdater, propertySelector);
 
         rootUpdater.AddProperty(updater);
         navigationPropertyUpdater.AddRoot(rootUpdater);
         return rootUpdater;
     }
-}
 
-public class TestRepository(DbContext dbContext) : EFRepositoryBase<Test, int>(dbContext)
-{
-    public void Edit1(Test model)
-    {
-        //IQueryable<Test> v = dbContext.Set<Test>().Include(c => c.Level1).ThenInclude(c => c.)
-        //HasNavigation().UpdateOne(c => c.Level1).ThenOne(c => c.Level2).UpdateOne(c => c.Level2);
-    }
-}
-
-public class Test : EntityBase<int>, IAggregateRoot
-{
-    public Level1 Level1 { get; set; }
-
-}
-
-public class Level1 : EntityBase<int>
-{
-    public IList<Level2> Level2 { get; set; }
-}
-
-public class Level2 : EntityBase<int>
-{
-
+    static string GetMemberName<TRoot, T>(Expression<Func<TRoot, T>> propertyAccessor)
+        where TRoot : class
+        where T : class
+        => ((MemberExpression)propertyAccessor.Body).Member.Name;
 }
