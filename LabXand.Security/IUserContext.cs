@@ -2,6 +2,9 @@
 
 public interface IUserContext
 {
-    Guid UserId { get; }
     string UserName { get; }
+}
+public interface IUserContext<TId> : IUserContext
+{
+    TId UserId { get; }
 }
