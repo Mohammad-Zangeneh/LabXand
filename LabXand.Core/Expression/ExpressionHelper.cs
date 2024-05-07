@@ -202,15 +202,15 @@ namespace LabXand.Extensions
             return Expression.Lambda(GetMemberExpression<T>(parameter, propertyName), parameter);
         }
 
-        //public static Expression<Func<T, bool>> CreateFromCriteria<T>(Criteria criteria)
-        //{
-        //    if (criteria != null)
-        //    {
-        //        ParameterExpression parameter = Expression.Parameter(typeof(T));
-        //        return Expression.Lambda<Func<T, bool>>(criteria.GetExpression(parameter), parameter);
-        //    }
-        //    return null;
-        //}
+        public static Expression<Func<T, bool>> CreateFromCriteria<T>(Criteria criteria)
+        {
+            if (criteria != null)
+            {
+                ParameterExpression parameter = Expression.Parameter(typeof(T));
+                return Expression.Lambda<Func<T, bool>>(criteria.GetExpression(parameter), parameter);
+            }
+            return c => true;
+        }
         public static Expression<Func<T, bool>> Rewrite<T>(Expression<Func<T, bool>> exp, ParameterExpression parameter)
         {
             var newExpression = new PredicateRewriterVisitor(parameter).Visit(exp);

@@ -4,6 +4,8 @@ namespace LabXand.Core;
 
 public static class QueryableExteder
 {
+    public static IQueryable<TSource> Sort<TSource>(this IQueryable<TSource> source, List<SortItem> sortItems)
+        => condition ? source.Where(predicate) : source;
     public static IQueryable<TSource> WhereIf<TSource>(this IQueryable<TSource> source, bool condition, Expression<Func<TSource, bool>> predicate) 
         => condition ? source.Where(predicate) : source;
 
