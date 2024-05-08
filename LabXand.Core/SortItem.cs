@@ -1,4 +1,6 @@
-﻿namespace LabXand.Core;
+﻿using System.Linq.Expressions;
+
+namespace LabXand.Core;
 
 public class SortItem
 {

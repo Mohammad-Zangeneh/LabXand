@@ -13,7 +13,7 @@ public abstract class Criteria
     [DataMember]
     public virtual object SecondOperand { get; set; }
     public Type ObjectType { get; set; }
-    public Expression GetExpression(ParameterExpression parameter)
+    public virtual Expression GetExpression(ParameterExpression parameter)
     {
         if (this.FirstOprand == null && this.SecondOperand == null)
         {

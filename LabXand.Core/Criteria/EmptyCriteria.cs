@@ -4,10 +4,11 @@ namespace LabXand.Core;
 
 public class EmptyCriteria : Criteria
 {
-    protected override void Initialize(ParameterExpression parameter)
+    public override Expression GetExpression(ParameterExpression parameter)
     {
-
+        return CreateExpression(parameter);
     }
+
     protected override Expression CreateExpression(ParameterExpression parameter)
     {
         if (parameter == null)

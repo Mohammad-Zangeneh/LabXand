@@ -22,12 +22,6 @@ namespace LabXand.Extensions
             return GetMemberAccessExpression(expression, members, typeof(T));
         }
 
-        public static Expression<Func<T, dynamic>> CreatePropertySelector<T>(string propertyName)
-        {
-            ParameterExpression parameter = Expression.Parameter(typeof(T));
-            var expression = GetMemberExpression<T>(parameter, propertyName);
-            return Expression.Lambda<Func<T, dynamic>>(expression, parameter);
-        }
         public static Expression CreateConditionalExpression(Expression instanceExpression, string memberAccess, Type objectType, object value, Type valueType, IConditionalExpressionBuilder conditionalExpressionBuilder)
         {
             List<string> memberList = memberAccess.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -230,7 +224,7 @@ namespace LabXand.Extensions
             var memberExpression = expression.Body as MemberExpression;
             if (memberExpression == null)
             {
-                UnaryExpression unaryExpr = expression as UnaryExpression;
+                UnaryExpression unaryExpr = expression.Body as UnaryExpression;
                 if (unaryExpr != null && unaryExpr.NodeType == ExpressionType.Convert)
                 {
                     memberExpression = unaryExpr.Operand as MemberExpression;
