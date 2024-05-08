@@ -1,16 +1,13 @@
 ﻿using LabXand.Extensions;
-using System;
 using System.Linq.Expressions;
-using System.Reflection;
 
-namespace LabXand.Core
+namespace LabXand.Core;
+
+[Serializable]
+public class IsNullCriteria : Criteria
 {
-    [Serializable]
-    public class IsNullCriteria : Criteria
+    protected override Expression CreateExpression(ParameterExpression parameter)
     {
-        protected override Expression CreateExpression(ParameterExpression parameter)
-        {
-            return ExpressionHelper.CreateConditionalExpression(parameter, this.FirstOprand.ToString(), ObjectType, null, typeof(object), new IsNullConditionExpressionBuilder());
-        }
+        return ExpressionHelper.CreateConditionalExpression(parameter, this.FirstOprand.ToString(), ObjectType, null, typeof(object), new IsNullConditionExpressionBuilder());
     }
 }

@@ -2,10 +2,11 @@
 
 namespace LabXand.Data.EF;
 
-public class RootUpdater<TRoot>() : RootPropertyUpdaterBase<TRoot>()
+public class RootUpdater<TRoot>(string key) : RootPropertyUpdaterBase<TRoot>()
     where TRoot : class
 {
-    public override string Key => string.Empty;
+    public RootUpdater() : this(string.Empty) { }
+    public override string Key => key;
 
     public override void Update(DbContext dbContext, TRoot current, TRoot original)
     {
