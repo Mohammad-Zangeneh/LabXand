@@ -9,19 +9,25 @@ namespace LabXand.Extensions
         public static object GetPropertyValue<T>(T objectInstance, string propertyName)
         {
             ParameterExpression parameter = Expression.Parameter(typeof(T));
-            return Expression.Lambda<Func<T, object>>(Expression.Convert(ExpressionHelper.GetMemberExpression<T>(parameter, propertyName), typeof(object)), parameter).Compile().Invoke(objectInstance);
+            return Expression.Lambda<Func<T, object>>(Expression.Convert(GetMemberExpression<T>(parameter, propertyName), typeof(object)), parameter).Compile().Invoke(objectInstance);
         }
         public static MemberExpression GetMemberExpression<T>(string members)
         {
             ParameterExpression parameter = Expression.Parameter(typeof(T));
-            return ExpressionHelper.GetMemberExpression<T>(parameter, members);
+            return GetMemberExpression<T>(parameter, members);
         }
 
         public static MemberExpression GetMemberExpression<T>(Expression expression, string members)
         {
-            return ExpressionHelper.GetMemberAccessExpression(expression, members, typeof(T));
+            return GetMemberAccessExpression(expression, members, typeof(T));
         }
 
+        public static Expression<Func<T, dynamic>> CreatePropertySelector<T>(string propertyName)
+        {
+            ParameterExpression parameter = Expression.Parameter(typeof(T));
+            var expression = GetMemberExpression<T>(parameter, propertyName);
+            return Expression.Lambda<Func<T, dynamic>>(expression, parameter);
+        }
         public static Expression CreateConditionalExpression(Expression instanceExpression, string memberAccess, Type objectType, object value, Type valueType, IConditionalExpressionBuilder conditionalExpressionBuilder)
         {
             List<string> memberList = memberAccess.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries).ToList();
@@ -111,11 +117,11 @@ namespace LabXand.Extensions
             else
                 rightExpression = Expression.Constant(value, valueType);
 
-            MemberExpression propertyAccess = ExpressionHelper.GetMemberExpression<T>(parameter, propertyName);
+            MemberExpression propertyAccess = GetMemberExpression<T>(parameter, propertyName);
             if (valueType.IsNullable())
             {
-                MemberExpression propertyValueAccess = ExpressionHelper.GetMemberExpression<T>(parameter, string.Format("{0}.Value", propertyName));
-                MemberExpression hasValueAccess = ExpressionHelper.GetMemberExpression<T>(parameter, string.Format("{0}.HasValue", propertyName));
+                MemberExpression propertyValueAccess = GetMemberExpression<T>(parameter, string.Format("{0}.Value", propertyName));
+                MemberExpression hasValueAccess = GetMemberExpression<T>(parameter, string.Format("{0}.HasValue", propertyName));
                 return Expression.Lambda<Func<T, bool>>(
                     Expression.Condition(hasValueAccess, Expression.Equal(propertyValueAccess, rightExpression), Expression.Constant(false)), new[] { parameter });
             }
