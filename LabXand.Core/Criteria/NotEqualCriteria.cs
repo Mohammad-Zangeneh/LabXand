@@ -1,17 +1,13 @@
 ﻿using LabXand.Extensions;
-using System;
 using System.Linq.Expressions;
-using System.Reflection;
 
-namespace LabXand.Core
+namespace LabXand.Core;
+
+[Serializable]
+public class NotEqualCriteria : Criteria
 {
-    [Serializable]
-    public class NotEqualCriteria : Criteria
+    protected override Expression CreateExpression(ParameterExpression parameter)
     {
-        protected override Expression CreateExpression(ParameterExpression parameter)
-        {
-            return ExpressionHelper.CreateConditionalExpression(parameter, this.FirstOprand.ToString(), ObjectType, this.SecondOperand, this.SecondOperand.GetType(), new NotEqualConditionExpressionBuilder());
-        }
+        return ExpressionHelper.CreateConditionalExpression(parameter, this.FirstOprand.ToString(), ObjectType, this.SecondOperand, this.SecondOperand.GetType(), new NotEqualConditionExpressionBuilder());
     }
-
 }

@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using System.Collections;
 using System.ComponentModel;
-using System.Globalization;
 using Ardalis.GuardClauses;
 
 namespace LabXand.Core
@@ -130,11 +129,12 @@ namespace LabXand.Core
         /// <param name="from">The <see cref="object"/> to get the value from.</param>
         /// <param name="propertyName">The name of the property to extract the value for.</param>
         /// <returns>The value of the property.</returns>
-        public static object GetPropertyValue(object from, string propertyName)
+        public static object? GetPropertyValue(object from, string propertyName)
         {
             Guard.Against.Null(from, "value");
             var propertyInfo = from.GetType().GetProperty(propertyName,
                 BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic);
+            Guard.Against.Null(propertyInfo, "propertyInfo", $"{from.GetType().Name} hasn't {propertyInfo} property!");
             return propertyInfo.GetValue(from, null);
         }
 

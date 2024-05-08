@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
+﻿using System.Linq.Expressions;
 
-namespace LabXand.Core
+namespace LabXand.Core;
+
+public class EmptyCriteria : Criteria
 {
-    public class EmptyCriteria : Criteria
+    public override Expression GetExpression(ParameterExpression parameter)
     {
-        protected override void Initialize(ParameterExpression parameter)
-        {
+        return CreateExpression(parameter);
+    }
 
-        }
-        protected override Expression CreateExpression(ParameterExpression parameter)
+    protected override Expression CreateExpression(ParameterExpression parameter)
+    {
+        if (parameter == null)
         {
-            if (parameter == null)
-            {
-                parameter = Expression.Parameter(ObjectType);
-            }
-
-            return Expression.Constant(true);
+            parameter = Expression.Parameter(ObjectType);
         }
+
+        return Expression.Constant(true);
     }
 }

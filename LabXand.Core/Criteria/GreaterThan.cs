@@ -1,16 +1,13 @@
 ﻿using LabXand.Extensions;
-using System;
 using System.Linq.Expressions;
-using System.Reflection;
 
-namespace LabXand.Core
+namespace LabXand.Core;
+
+[Serializable]
+public class GreaterThan : Criteria
 {
-    [Serializable]
-    public class GreaterThan : Criteria
+    protected override Expression CreateExpression(ParameterExpression parameter)
     {
-        protected override Expression CreateExpression(ParameterExpression parameter)
-        {
-            return ExpressionHelper.CreateConditionalExpression(parameter, this.FirstOprand.ToString(), ObjectType, this.SecondOperand, this.SecondOperand.GetType(), new GreaterThanConditionExpressionBuilder());
-        }
+        return ExpressionHelper.CreateConditionalExpression(parameter, this.FirstOprand.ToString(), ObjectType, this.SecondOperand, this.SecondOperand.GetType(), new GreaterThanConditionExpressionBuilder());
     }
 }
