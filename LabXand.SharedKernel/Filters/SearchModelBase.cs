@@ -45,4 +45,17 @@ public static class SearchModelExtender
         searchModel.AddMapConfig(ExpressionHelper.GetPropertyName(searchModelProperty), operation, ExpressionHelper.GetPropertyName(domainProperty));
         return searchModel;
     }
+
+    public static TSearchModel Register<TSearchModel, TSearchPropertyType, TDomainPropertyType, TEntity, TId>(
+        this TSearchModel searchModel,
+        Expression<Func<TSearchModel, TSearchPropertyType>> searchModelProperty,
+        FilterOperations operation,
+        Expression<Func<TEntity, TDomainPropertyType>> domainProperty)
+            where TSearchModel : SearchModelBase<TEntity, TId>
+            where TEntity : class, IEntity<TId>
+            where TId : struct
+    {
+        searchModel.AddMapConfig(ExpressionHelper.GetPropertyName(searchModelProperty), operation, ExpressionHelper.GetPropertyName(domainProperty));
+        return searchModel;
+    }
 }

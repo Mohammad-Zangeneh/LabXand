@@ -11,7 +11,7 @@ public abstract class ApplicationServiceBase<TRepository, TAggregateRoot, TIdent
     where TAggregateRoot : EntityBase<TIdentifier>, IAggregateRoot
     where TIdentifier : struct
 {
-    protected readonly IRepository<TAggregateRoot, TIdentifier> repository = repository;
+    protected readonly TRepository repository = repository;
     protected readonly IMapper mapper = mapper;
 
     protected Task<List<TResponse>> GetListAsync<TResponse, TSearchModel>(IQueryable<TAggregateRoot> query, SearchSpecification<TSearchModel> searchSpecification, CancellationToken cancellationToken)
