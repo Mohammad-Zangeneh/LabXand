@@ -6,7 +6,8 @@ using LabXand.SharedKernel.Filters;
 
 namespace LabXand.SharedKernel;
 
-public abstract class ApplicationServiceBase<TAggregateRoot, TIdentifier>(IRepository<TAggregateRoot, TIdentifier> repository, IMapper mapper) : IApplicationService<TAggregateRoot>
+public abstract class ApplicationServiceBase<TRepository, TAggregateRoot, TIdentifier>(TRepository repository, IMapper mapper) : IApplicationService<TAggregateRoot>
+    where TRepository : IRepository<TAggregateRoot, TIdentifier>
     where TAggregateRoot : EntityBase<TIdentifier>, IAggregateRoot
     where TIdentifier : struct
 {
