@@ -21,7 +21,6 @@ public abstract class ListNavigationPropertyUpdater<TRoot, T, I>(INavigationProp
             return value;
         return [];
     }
-
     public override void Update(DbContext dbContext, TRoot rootCurrentValue, TRoot rootOriginalValue)
     {
         ICollection<T> originalNavigationPropertyValue = GetList(rootOriginalValue);
@@ -31,44 +30,50 @@ public abstract class ListNavigationPropertyUpdater<TRoot, T, I>(INavigationProp
         UpdateEntities(dbContext, originalNavigationPropertyValue, currentNavigationPropertyValue);
         DeleteEntities(dbContext, rootOriginalValue, originalNavigationPropertyValue, currentNavigationPropertyValue);
         AddEntities(dbContext, rootCurrentValue, originalNavigationPropertyValue, currentNavigationPropertyValue);
+    }
 
-        void UpdateEntities(DbContext dbContext, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    void UpdateEntities(DbContext dbContext, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    {
+        List<I> mustUpdate = currentNavigationPropertyValue.Join(originalNavigationPropertyValue, c => c.Id, c => c.Id, (c, o) => c.Id).ToList();
+        foreach (var id in mustUpdate)
         {
-            List<I> mustUpdate = currentNavigationPropertyValue.Join(originalNavigationPropertyValue, c => c.Id, c => c.Id, (c, o) => c.Id).ToList();
-            foreach (var id in mustUpdate)
-            {
-                var currentValue = currentNavigationPropertyValue.First(o => o.Id.Equals(id));
-                var originalValue = originalNavigationPropertyValue.First(p => p.Id.Equals(id));
-                dbContext.SafeUpdate(currentValue, originalValue);
-                foreach (var childUpdater in navigationPropertyUpdaters)
-                    childUpdater.Update(dbContext, currentValue, originalNavigationPropertyValue.First(o => o.Id.Equals(id)));
-            }
+            var currentValue = currentNavigationPropertyValue.First(o => o.Id.Equals(id));
+            var originalValue = originalNavigationPropertyValue.First(p => p.Id.Equals(id));
+            OnUpdate(dbContext, currentValue, originalValue, id);
         }
+    }
 
-        void DeleteEntities(DbContext dbContext, TRoot rootOriginalValue, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    void DeleteEntities(DbContext dbContext, TRoot rootOriginalValue, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    {
+        List<I> mustBeDelte = originalNavigationPropertyValue.Select(o => o.Id).Except(currentNavigationPropertyValue.Select(c => c.Id)).ToList();
+        foreach (var id in mustBeDelte)
         {
-            List<I> mustBeDelte = originalNavigationPropertyValue.Select(o => o.Id).Except(currentNavigationPropertyValue.Select(c => c.Id)).ToList();
-            foreach (var id in mustBeDelte)
-            {
-                var originalValue = originalNavigationPropertyValue.First(o => o.Id.Equals(id));
-                navigationPropertyUpdaterCustomizer?.OnBeforRemoveEntity(rootOriginalValue, originalValue).Invoke(rootOriginalValue, originalValue); ;
-                OnDelete(dbContext, originalNavigationPropertyValue, originalValue);
-                navigationPropertyUpdaterCustomizer?.OnAfterRemoveEntity(rootOriginalValue, originalValue).Invoke(rootOriginalValue, originalValue); ;
-            }
+            var originalValue = originalNavigationPropertyValue.First(o => o.Id.Equals(id));
+            navigationPropertyUpdaterCustomizer?.OnBeforRemoveEntity(rootOriginalValue, originalValue).Invoke(rootOriginalValue, originalValue); ;
+            OnDelete(dbContext, originalNavigationPropertyValue, originalValue);
+            navigationPropertyUpdaterCustomizer?.OnAfterRemoveEntity(rootOriginalValue, originalValue).Invoke(rootOriginalValue, originalValue); ;
         }
+    }
 
-        void AddEntities(DbContext dbContext, TRoot rootCurrentValue, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    void AddEntities(DbContext dbContext, TRoot rootCurrentValue, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    {
+        List<I> mustBeAdd = currentNavigationPropertyValue.Select(o => o.Id).Except(originalNavigationPropertyValue.Select(c => c.Id)).ToList();
+        dbContext.Set<T>().Where(t => mustBeAdd.Contains(t.Id)).ToList();
+        foreach (var id in mustBeAdd)
         {
-            List<I> mustBeAdd = currentNavigationPropertyValue.Select(o => o.Id).Except(originalNavigationPropertyValue.Select(c => c.Id)).ToList();
-            dbContext.Set<T>().Where(t => mustBeAdd.Contains(t.Id)).ToList();
-            foreach (var id in mustBeAdd)
-            {
-                var currentValue = currentNavigationPropertyValue.First(o => o.Id.Equals(id));
-                navigationPropertyUpdaterCustomizer?.OnAfterAddEntity(rootCurrentValue, currentValue).Invoke(rootCurrentValue, currentValue); ;
-                OnAdd(dbContext, originalNavigationPropertyValue, currentValue);
-                navigationPropertyUpdaterCustomizer?.OnAfterAddEntity(rootCurrentValue, currentValue).Invoke(rootCurrentValue, currentValue); ;
-            }
+            var currentValue = currentNavigationPropertyValue.First(o => o.Id.Equals(id));
+            navigationPropertyUpdaterCustomizer?.OnAfterAddEntity(rootCurrentValue, currentValue).Invoke(rootCurrentValue, currentValue); ;
+            OnAdd(dbContext, originalNavigationPropertyValue, currentValue);
+            navigationPropertyUpdaterCustomizer?.OnAfterAddEntity(rootCurrentValue, currentValue).Invoke(rootCurrentValue, currentValue); ;
         }
+    }
+
+    protected virtual void OnUpdate(DbContext dbContext, T originalValue, T currentValue, I id)
+    {
+
+        dbContext.SafeUpdate(currentValue, originalValue);
+        foreach (var childUpdater in navigationPropertyUpdaters)
+            childUpdater.Update(dbContext, currentValue, originalValue);
     }
 
     protected abstract void OnDelete(DbContext dbContext, ICollection<T> originalPropertyValue, T originalValue);

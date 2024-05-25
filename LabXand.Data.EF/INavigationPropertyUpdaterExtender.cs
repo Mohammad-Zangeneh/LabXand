@@ -35,7 +35,18 @@ public static class INavigationPropertyUpdaterExtender
         where T : class, IEntity<I>
         where I : struct
     {
-        var updater = new OneToManyNavigationPropertyUpdate<TRoot, T, I>(propertyUpdater, propertySelector);
+        var updater = new OneToManyNavigationPropertyUpdater<TRoot, T, I>(propertyUpdater, propertySelector);
+        propertyUpdater.AddProperty(updater);
+        return updater;
+    }
+
+    public static INavigationPropertyUpdater<TRoot, T> UpdateImutableList<TRoot, T, I>(this INavigationPropertyUpdater<TRoot> propertyUpdater,
+        Expression<Func<TRoot, ICollection<T>>> propertySelector)
+        where TRoot : class
+        where T : class, IEntity<I>
+        where I : struct
+    {
+        var updater = new OneToManyImutableNavigationPropertyUpdater<TRoot, T, I>(propertyUpdater, propertySelector);
         propertyUpdater.AddProperty(updater);
         return updater;
     }
@@ -48,7 +59,22 @@ public static class INavigationPropertyUpdaterExtender
         where I : struct
     {
         var rootUpdater = new RootUpdater<T>(GetMemberName(propertySelector));
-        var updater = new OneToManyNavigationPropertyUpdate<T, T1, I>(rootUpdater, propertySelector);
+        var updater = new OneToManyNavigationPropertyUpdater<T, T1, I>(rootUpdater, propertySelector);
+
+        rootUpdater.AddProperty(updater);
+        navigationPropertyUpdater.AddRoot(rootUpdater);
+        return rootUpdater;
+    }
+
+    public static INavigationPropertyUpdater<T> ThenImutableList<TRoot, T, T1, I>(this INavigationPropertyUpdater<TRoot, T> navigationPropertyUpdater,
+        Expression<Func<T, ICollection<T1>>> propertySelector)
+        where TRoot : class
+        where T : class
+        where T1 : class, IEntity<I>
+        where I : struct
+    {
+        var rootUpdater = new RootUpdater<T>(GetMemberName(propertySelector));
+        var updater = new OneToManyImutableNavigationPropertyUpdater<T, T1, I>(rootUpdater, propertySelector);
 
         rootUpdater.AddProperty(updater);
         navigationPropertyUpdater.AddRoot(rootUpdater);

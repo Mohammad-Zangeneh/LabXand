@@ -37,4 +37,21 @@ public abstract class ApplicationServiceBase<TRepository, TAggregateRoot, TIdent
             searchSpecification.PageSize,
             await repository.CountAsync(query, expression, cancellationToken));
     }
+
+    protected async Task<TResponse> GetAsync<TResponse, TSearchModel>(IQueryable<TAggregateRoot> query, SearchSpecification<TSearchModel> searchSpecification, CancellationToken cancellationToken)
+        where TSearchModel : ISearchModel, new()
+        where TResponse : class
+    {
+        var expression = ExpressionHelper.CreateFromCriteria<TAggregateRoot>(searchSpecification.GetCriteria());
+        query = query.Where(expression).Sort(searchSpecification.SortItems);
+        return mapper.Map<TAggregateRoot, TResponse>(await repository.GetAsync(query, cancellationToken));
+    }
+
+    protected Task<int> CountAsync<TSearchModel>(IQueryable<TAggregateRoot> query, SearchSpecification<TSearchModel> searchSpecification, CancellationToken cancellationToken)
+        where TSearchModel : ISearchModel, new()
+    {
+        var expression = ExpressionHelper.CreateFromCriteria<TAggregateRoot>(searchSpecification.GetCriteria());
+        query = query.Where(expression).Sort(searchSpecification.SortItems);
+        return repository.CountAsync(query, cancellationToken);
+    }
 }
