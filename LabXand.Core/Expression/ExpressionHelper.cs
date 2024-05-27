@@ -279,7 +279,7 @@ namespace LabXand.Extensions
             var memberExpression = propertySelector.Body as MemberExpression;
             if (memberExpression == null)
             {
-                UnaryExpression unaryExpr = propertySelector as UnaryExpression;
+                UnaryExpression unaryExpr = propertySelector.Body as UnaryExpression;
                 if (unaryExpr != null && unaryExpr.NodeType == ExpressionType.Convert)
                 {
                     memberExpression = unaryExpr.Operand as MemberExpression;

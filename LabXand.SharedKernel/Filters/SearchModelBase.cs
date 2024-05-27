@@ -42,7 +42,7 @@ public static class SearchModelExtender
             where TEntity : class, IEntity<TId>
             where TId : struct
     {
-        searchModel.AddMapConfig(ExpressionHelper.GetPropertyName(searchModelProperty), operation, ExpressionHelper.GetPropertyName(domainProperty));
+        searchModel.AddMapConfig(ExpressionHelper.GetNameOfProperty(searchModelProperty), operation, ExpressionHelper.GetNameOfProperty(domainProperty));
         return searchModel;
     }
 
@@ -55,7 +55,7 @@ public static class SearchModelExtender
             where TEntity : class, IEntity<TId>
             where TId : struct
     {
-        searchModel.AddMapConfig(ExpressionHelper.GetPropertyName(searchModelProperty), operation, ExpressionHelper.GetPropertyName(domainProperty));
+        searchModel.AddMapConfig(ExpressionHelper.GetNameOfProperty(searchModelProperty), operation, ExpressionHelper.GetNameOfProperty(domainProperty));
         return searchModel;
     }
 }

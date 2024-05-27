@@ -87,7 +87,7 @@ public static class INavigationPropertyUpdaterExtender
         where T : class, IEntity<I>
         where I : struct
     {
-        var updater = new ManyToManyNavigationPropertyUpdate<TRoot, T, I>(propertyUpdater, propertySelector);
+        var updater = new ManyToManyNavigationPropertyUpdater<TRoot, T, I>(propertyUpdater, propertySelector);
         propertyUpdater.AddProperty(updater);
         return updater;
     }
@@ -100,7 +100,7 @@ public static class INavigationPropertyUpdaterExtender
         where I : struct
     {
         var rootUpdater = new RootUpdater<T>(GetMemberName(propertySelector));
-        var updater = new ManyToManyNavigationPropertyUpdate<T, T1, I>(rootUpdater, propertySelector);
+        var updater = new ManyToManyNavigationPropertyUpdater<T, T1, I>(rootUpdater, propertySelector);
 
         rootUpdater.AddProperty(updater);
         navigationPropertyUpdater.AddRoot(rootUpdater);
