@@ -69,7 +69,7 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
     public async Task<TResult?> GetByIdAsync<TResult, TId>(TId identifier, CancellationToken cancellationToken)
         where TResult : EntityBase<TId>
         where TId : struct
-        => await dbContext.Set<TResult>().FirstOrDefaultAsync(t => t.Id.Equals(identifier), cancellationToken: cancellationToken);
+        => await dbContext.Set<TResult>().AsNoTracking().FirstOrDefaultAsync(t => t.Id.Equals(identifier), cancellationToken: cancellationToken);
 
     protected INavigationPropertyUpdater<TAggregateRoot> HasNavigation()
     {
