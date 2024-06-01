@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace LabXand.Data.EF;
 
-public abstract class ListNavigationPropertyUpdater<TRoot, T, I>(INavigationPropertyUpdater<TRoot> root, Expression<Func<TRoot, ICollection<T>>> propertyAccessor) : NavigationPropertyUpdaterBase<TRoot, T>(root)
+public class ListNavigationPropertyUpdater<TRoot, T, I>(INavigationPropertyUpdater<TRoot> root, Expression<Func<TRoot, ICollection<T>>> propertyAccessor) : NavigationPropertyUpdaterBase<TRoot, T>(root)
     where TRoot : class
     where T : class, IEntity<I>
     where I : struct
@@ -32,7 +32,7 @@ public abstract class ListNavigationPropertyUpdater<TRoot, T, I>(INavigationProp
         AddEntities(dbContext, rootCurrentValue, originalNavigationPropertyValue, currentNavigationPropertyValue);
     }
 
-    void UpdateEntities(DbContext dbContext, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    protected virtual void UpdateEntities(DbContext dbContext, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
     {
         List<I> mustUpdate = currentNavigationPropertyValue.Join(originalNavigationPropertyValue, c => c.Id, c => c.Id, (c, o) => c.Id).ToList();
         foreach (var id in mustUpdate)
@@ -43,7 +43,7 @@ public abstract class ListNavigationPropertyUpdater<TRoot, T, I>(INavigationProp
         }
     }
 
-    void DeleteEntities(DbContext dbContext, TRoot rootOriginalValue, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    protected virtual void DeleteEntities(DbContext dbContext, TRoot rootOriginalValue, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
     {
         List<I> mustBeDelte = originalNavigationPropertyValue.Select(o => o.Id).Except(currentNavigationPropertyValue.Select(c => c.Id)).ToList();
         foreach (var id in mustBeDelte)
@@ -55,27 +55,25 @@ public abstract class ListNavigationPropertyUpdater<TRoot, T, I>(INavigationProp
         }
     }
 
-    void AddEntities(DbContext dbContext, TRoot rootCurrentValue, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    protected virtual void AddEntities(DbContext dbContext, TRoot rootCurrentValue, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
     {
-        List<I> mustBeAdd = currentNavigationPropertyValue.Select(o => o.Id).Except(originalNavigationPropertyValue.Select(c => c.Id)).ToList();
-        dbContext.Set<T>().Where(t => mustBeAdd.Contains(t.Id)).ToList();
-        foreach (var id in mustBeAdd)
+        foreach (var item in currentNavigationPropertyValue)
         {
-            var currentValue = currentNavigationPropertyValue.First(o => o.Id.Equals(id));
-            navigationPropertyUpdaterCustomizer?.OnAfterAddEntity(rootCurrentValue, currentValue).Invoke(rootCurrentValue, currentValue); ;
-            OnAdd(dbContext, originalNavigationPropertyValue, currentValue);
-            navigationPropertyUpdaterCustomizer?.OnAfterAddEntity(rootCurrentValue, currentValue).Invoke(rootCurrentValue, currentValue); ;
+            if (originalNavigationPropertyValue.Any(x => x.Id.Equals(item.Id)))
+                continue;
+            navigationPropertyUpdaterCustomizer?.OnAfterAddEntity(rootCurrentValue, item).Invoke(rootCurrentValue, item);
+            OnAdd(dbContext, originalNavigationPropertyValue, item);
+            navigationPropertyUpdaterCustomizer?.OnAfterAddEntity(rootCurrentValue, item).Invoke(rootCurrentValue, item);
         }
     }
 
     protected virtual void OnUpdate(DbContext dbContext, T originalValue, T currentValue, I id)
     {
-
         dbContext.SafeUpdate(currentValue, originalValue);
         foreach (var childUpdater in navigationPropertyUpdaters)
             childUpdater.Update(dbContext, currentValue, originalValue);
     }
 
-    protected abstract void OnDelete(DbContext dbContext, ICollection<T> originalPropertyValue, T originalValue);
-    protected abstract void OnAdd(DbContext dbContext, ICollection<T> originalPropertyValue, T currentValue);
+    protected virtual void OnDelete(DbContext dbContext, ICollection<T> originalPropertyValue, T originalValue) => dbContext.Entry(originalValue).State = EntityState.Deleted;
+    protected virtual void OnAdd(DbContext dbContext, ICollection<T> originalPropertyValue, T currentValue) => dbContext.Entry(currentValue).State = EntityState.Added;
 }
