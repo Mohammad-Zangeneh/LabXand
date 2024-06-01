@@ -64,11 +64,12 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
         => query.ToListAsync(cancellationToken);
 
     public async Task<TAggregateRoot?> GetByIdAsync(TIdentifier identifier, CancellationToken cancellationToken) =>
-        await dbContext.Set<TAggregateRoot>().FindAsync([identifier], cancellationToken: cancellationToken);
+        await GetByIdAsync<TAggregateRoot, TIdentifier>(identifier, cancellationToken);
 
     public async Task<TResult?> GetByIdAsync<TResult, TId>(TId identifier, CancellationToken cancellationToken)
-        where TResult : class
-        => await dbContext.Set<TResult>().FindAsync([identifier], cancellationToken: cancellationToken);
+        where TResult : EntityBase<TId>
+        where TId : struct
+        => await dbContext.Set<TResult>().FirstOrDefaultAsync(t => t.Id.Equals(identifier), cancellationToken: cancellationToken);
 
     protected INavigationPropertyUpdater<TAggregateRoot> HasNavigation()
     {
