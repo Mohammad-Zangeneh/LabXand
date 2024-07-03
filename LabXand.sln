@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LabXand.Core", "LabXand.Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LabXand.Security", "LabXand.Security\LabXand.Security.csproj", "{AE7A64C1-B7F5-4DB1-81C8-4BAB1FEBEA6A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{22B87A3B-A5C7-4F9B-BDC6-4E3E857BAD93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BCFDC402-EAEB-4EBE-A7D8-D4698594FEC4} = {22B87A3B-A5C7-4F9B-BDC6-4E3E857BAD93}
+		{7332531C-02D7-4392-B2BD-A78FC6CEEE82} = {22B87A3B-A5C7-4F9B-BDC6-4E3E857BAD93}
+		{DCC572F7-6BC1-4E79-948E-E2B98E2FD2B2} = {22B87A3B-A5C7-4F9B-BDC6-4E3E857BAD93}
+		{AE7A64C1-B7F5-4DB1-81C8-4BAB1FEBEA6A} = {22B87A3B-A5C7-4F9B-BDC6-4E3E857BAD93}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD1CA6E2-15DE-47C8-B7B9-E624D9F77158}
