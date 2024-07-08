@@ -76,11 +76,11 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
         where TId : struct
         => await dbContext.Set<TResult>().AsNoTracking().FirstOrDefaultAsync(t => t.Id.Equals(identifier), cancellationToken: cancellationToken);
 
-    protected INavigationPropertyUpdater<TAggregateRoot> HasNavigation()
+    protected INavigationPropertyUpdater<TAggregateRoot> HasNavigation(INavigationPropertyUpdaterCustomizer<TAggregateRoot>? propertyUpdaterCustomizer = null)
     {
         if (NavigationPropertyUpdater is not null)
             return NavigationPropertyUpdater;
-        var rootUpdater = new RootUpdater<TAggregateRoot>();
+        var rootUpdater = new RootUpdater<TAggregateRoot>(propertyUpdaterCustomizer!);
         NavigationPropertyUpdater = rootUpdater;
         return rootUpdater;
     }
