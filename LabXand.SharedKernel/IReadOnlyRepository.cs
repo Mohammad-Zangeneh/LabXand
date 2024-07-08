@@ -7,6 +7,7 @@ namespace LabXand.SharedKernel
         where TIdentifier : struct
     {
         IQueryable<TAggregateRoot> Query { get; }
+        IQueryable<TAggregateRoot> GetQuery(bool asNoTracking = false);
         Task<int> CountAsync(IQueryable<TAggregateRoot> query, Expression<Func<TAggregateRoot, bool>> expression, CancellationToken cancellationToken);
         Task<TAggregateRoot?> GetByIdAsync(TIdentifier identifier, CancellationToken cancellationToken);
         Task<TResult?> GetByIdAsync<TResult, TId>(TId identifier, CancellationToken cancellationToken) 

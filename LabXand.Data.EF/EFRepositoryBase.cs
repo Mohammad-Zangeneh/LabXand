@@ -12,12 +12,17 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
     protected readonly DbContext dbContext = dbContext;
     internal INavigationPropertyUpdater<TAggregateRoot> NavigationPropertyUpdater { get; set; }
 
-    public IQueryable<TAggregateRoot> Query => dbContext.Set<TAggregateRoot>().AsNoTracking();
+    public IQueryable<TAggregateRoot> Query => GetQuery();
+    public IQueryable<TAggregateRoot> GetQuery(bool asNoTracking = false) => asNoTracking ?
+        dbContext.Set<TAggregateRoot>() :
+        dbContext.Set<TAggregateRoot>().AsNoTracking();
     public virtual void Add(TAggregateRoot domain) => dbContext.Set<TAggregateRoot>().Add(domain);
-    public virtual void Edit(TAggregateRoot domain)
+    public virtual async void Edit(TAggregateRoot domain)
     {
         if (NavigationPropertyUpdater is null)
         {
+            if (await CountAsync(Query, t => t.Id.Equals(domain.Id), CancellationToken.None) is 0)
+                ExceptionManager.EntityNotFound<TAggregateRoot, TIdentifier>(domain.Id);
             dbContext.Attach(domain);
             dbContext.Entry(domain).State = EntityState.Modified;
             return;
