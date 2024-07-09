@@ -17,6 +17,6 @@ public class RootUpdater<TRoot> : RootPropertyUpdaterBase<TRoot>
         dbContext.SafeUpdate(current, original);
         foreach (var childUpdater in navigationPropertyUpdaters)
             childUpdater.Update(dbContext, current, original);
-        navigationPropertyUpdaterCustomizer?.OnBeforEditEntity(current, original);
+        navigationPropertyUpdaterCustomizer?.OnAfterEditEntity(current, original);
     }
 }
