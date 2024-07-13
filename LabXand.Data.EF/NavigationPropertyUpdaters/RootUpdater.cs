@@ -13,10 +13,11 @@ public class RootUpdater<TRoot> : RootPropertyUpdaterBase<TRoot>
 
     public override void Update(DbContext dbContext, TRoot current, TRoot original)
     {
-        navigationPropertyUpdaterCustomizer?.OnBeforEditEntity(current, original);
+        navigationPropertyUpdaterCustomizer?.OnBeforEditEntity(current, original).Invoke(current, original);
         dbContext.SafeUpdate(current, original);
-        foreach (var childUpdater in navigationPropertyUpdaters)
+        var list = navigationPropertyUpdaters.Except(navigationPropertyUpdaters.OfType<RootUpdater<TRoot>>()).ToList();
+        foreach (var childUpdater in list)
             childUpdater.Update(dbContext, current, original);
-        navigationPropertyUpdaterCustomizer?.OnAfterEditEntity(current, original);
+        navigationPropertyUpdaterCustomizer?.OnAfterEditEntity(current, original).Invoke(current, original);
     }
 }

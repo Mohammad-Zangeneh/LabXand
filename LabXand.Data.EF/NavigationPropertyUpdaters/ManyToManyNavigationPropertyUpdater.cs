@@ -16,8 +16,12 @@ public class ManyToManyNavigationPropertyUpdater<TRoot, T, I>(INavigationPropert
         var dbValues = dbContext.Set<T>().Where(entity => newValueIds.Contains(entity.Id)).ToList();
 
         dbValues.ForEach(t => navigationPropertyUpdaterCustomizer?.OnBeforAddEntity(rootCurrentValue, t).Invoke(rootCurrentValue, t));
-        originalNavigationPropertyValue.ToList().AddRange(dbValues);
+        dbValues.ForEach(originalNavigationPropertyValue.Add);
         dbValues.ForEach(t => navigationPropertyUpdaterCustomizer?.OnAfterAddEntity(rootCurrentValue, t).Invoke(rootCurrentValue, t));
     }
     protected override void OnDelete(DbContext dbContext, ICollection<T> originalPropertyValue, T originalValue) => originalPropertyValue.Remove(originalValue);
+    protected override void UpdateEntities(DbContext dbContext, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    {
+        
+    }
 }

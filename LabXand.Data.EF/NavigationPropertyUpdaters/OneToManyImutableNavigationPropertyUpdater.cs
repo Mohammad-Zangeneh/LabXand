@@ -9,7 +9,7 @@ public class OneToManyImutableNavigationPropertyUpdater<TRoot, T, I>(INavigation
     where T : class, IEntity<I>
     where I : struct
 {
-    protected override void OnUpdate(DbContext dbContext, T originalValue, T currentValue, I id) { }
+    protected override void OnUpdate(DbContext dbContext, T currentValue, T originalValue, I id) { }
     protected override void OnAdd(DbContext dbContext, ICollection<T> originalPropertyValue, T currentValue) => dbContext.Entry(currentValue).State = EntityState.Added;
     protected override void OnDelete(DbContext dbContext, ICollection<T> originalPropertyValue, T originalValue) { }
 }

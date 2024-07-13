@@ -13,7 +13,6 @@ public static class DbContextExtensions
     {
         var entry = context.Entry(originalValue);
         entry.CurrentValues.SetValues(currentValue);
-
         if (constantFields != null)
         {
             foreach (string field in constantFields)

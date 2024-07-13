@@ -15,10 +15,20 @@ public abstract class RootPropertyUpdaterBase<TRoot>() : INavigationPropertyUpda
     public List<string> GetIncludePath()
     {
         List<string> path = [];
-        if (!string.IsNullOrWhiteSpace(Key))
+        if (KeyMustBeAdd())
             path.Add(Key);
-        path.AddRange(navigationPropertyUpdaters.SelectMany(n => n.GetIncludePath().Select(i => string.IsNullOrWhiteSpace(Key) ? i : $"{Key}.{i}")));
+
+        path.AddRange(navigationPropertyUpdaters
+            .Except(navigationPropertyUpdaters.OfType<RootUpdater<TRoot>>())
+            .SelectMany(n => n.GetIncludePath().Select(i => string.IsNullOrWhiteSpace(Key) ? i : $"{Key}.{i}")));
         return path.Distinct().ToList();
+        bool KeyMustBeAdd()
+        {
+            var keyIsEmpty = string.IsNullOrWhiteSpace(Key);
+            var isRootUpdater = GetType().IsAssignableFrom(typeof(RootUpdater<TRoot>));
+            return !(keyIsEmpty || isRootUpdater);
+
+        }
     }
     public void Update(DbContext dbContext, object current, object original) => Update(dbContext, (TRoot)current, (TRoot)original);
 

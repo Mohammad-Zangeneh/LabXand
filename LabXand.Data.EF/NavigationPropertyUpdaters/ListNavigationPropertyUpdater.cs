@@ -32,7 +32,9 @@ public class ListNavigationPropertyUpdater<TRoot, T, I>(INavigationPropertyUpdat
         AddEntities(dbContext, rootCurrentValue, originalNavigationPropertyValue, currentNavigationPropertyValue);
     }
 
-    protected virtual void UpdateEntities(DbContext dbContext, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    protected virtual void UpdateEntities(DbContext dbContext,
+        ICollection<T> originalNavigationPropertyValue,
+        ICollection<T> currentNavigationPropertyValue)
     {
         List<I> mustUpdate = currentNavigationPropertyValue.Join(originalNavigationPropertyValue, c => c.Id, c => c.Id, (c, o) => c.Id).ToList();
         foreach (var id in mustUpdate)
@@ -43,7 +45,10 @@ public class ListNavigationPropertyUpdater<TRoot, T, I>(INavigationPropertyUpdat
         }
     }
 
-    protected virtual void DeleteEntities(DbContext dbContext, TRoot rootOriginalValue, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    protected virtual void DeleteEntities(DbContext dbContext,
+        TRoot rootOriginalValue,
+        ICollection<T> originalNavigationPropertyValue,
+        ICollection<T> currentNavigationPropertyValue)
     {
         List<I> mustBeDelte = originalNavigationPropertyValue.Select(o => o.Id).Except(currentNavigationPropertyValue.Select(c => c.Id)).ToList();
         foreach (var id in mustBeDelte)
@@ -55,7 +60,10 @@ public class ListNavigationPropertyUpdater<TRoot, T, I>(INavigationPropertyUpdat
         }
     }
 
-    protected virtual void AddEntities(DbContext dbContext, TRoot rootCurrentValue, ICollection<T> originalNavigationPropertyValue, ICollection<T> currentNavigationPropertyValue)
+    protected virtual void AddEntities(DbContext dbContext,
+        TRoot rootCurrentValue,
+        ICollection<T> originalNavigationPropertyValue,
+        ICollection<T> currentNavigationPropertyValue)
     {
         foreach (var item in currentNavigationPropertyValue)
         {
@@ -67,10 +75,11 @@ public class ListNavigationPropertyUpdater<TRoot, T, I>(INavigationPropertyUpdat
         }
     }
 
-    protected virtual void OnUpdate(DbContext dbContext, T originalValue, T currentValue, I id)
+    protected virtual void OnUpdate(DbContext dbContext, T currentValue, T originalValue, I id)
     {
         dbContext.SafeUpdate(currentValue, originalValue);
-        foreach (var childUpdater in navigationPropertyUpdaters)
+        var list = navigationPropertyUpdaters.Except(navigationPropertyUpdaters.OfType<RootUpdater<TRoot>>()).ToList();
+        foreach (var childUpdater in list)
             childUpdater.Update(dbContext, currentValue, originalValue);
     }
 
