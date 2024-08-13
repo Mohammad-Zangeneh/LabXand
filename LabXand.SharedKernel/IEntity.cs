@@ -1,8 +1,12 @@
 ﻿namespace LabXand.SharedKernel;
 
-public interface IEntity<TIdentifier> where TIdentifier : struct
+public interface IEntity
+{
+    IReadOnlyCollection<IDomainEvent> DomainEvents { get; }
+}
+
+public interface IEntity<TIdentifier> : IEntity where TIdentifier : struct
 {
     TIdentifier Id { get; }
-    IList<IDomainEvent> Events { get; }
     string DescribeEntity();
 }
