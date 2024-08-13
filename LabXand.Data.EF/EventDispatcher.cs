@@ -1,7 +1,7 @@
 ﻿using LabXand.SharedKernel;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace LabXand.Data.EF.Interceptors;
+namespace LabXand.Data.EF;
 
 public class EventDispatcher(IServiceProvider serviceProvider) : IEventDispatcher
 {
