@@ -11,10 +11,14 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
 {
     protected IQueryable<TAggregateRoot>? trackingQuery;
     protected IQueryable<TAggregateRoot>? noTrackingQuery;
+    protected List<IRestriction<TAggregateRoot, TIdentifier>> restrictions = [];
     protected readonly DbContext dbContext = dbContext;
     internal INavigationPropertyUpdater<TAggregateRoot> NavigationPropertyUpdater { get; set; }
 
     public IQueryable<TAggregateRoot> Query => GetQuery();
+
+    public List<IRestriction<TAggregateRoot, TIdentifier>> Restrictions => restrictions;
+
     public IQueryable<TAggregateRoot> GetQuery(bool trackedQuery = false)
     {
         if (trackedQuery)
@@ -22,8 +26,15 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
             trackingQuery ??= dbContext.Set<TAggregateRoot>();
             return trackingQuery;
         }
-        noTrackingQuery ??= dbContext.Set<TAggregateRoot>().AsNoTracking();
+        noTrackingQuery ??= dbContext.Set<TAggregateRoot>()
+            .AsNoTracking()
+            .AsSingleQuery();
         return noTrackingQuery;
+    }
+    IQueryable<TAggregateRoot> ApplyRestriction(IQueryable<TAggregateRoot> query)
+    {
+        restrictions.ForEach(restriction => query = query.Where(restriction.Specification.Criteria));
+        return query;
     }
     public virtual void Add(TAggregateRoot domain) => dbContext.Set<TAggregateRoot>().Add(domain);
     public virtual void Edit(TAggregateRoot domain)
