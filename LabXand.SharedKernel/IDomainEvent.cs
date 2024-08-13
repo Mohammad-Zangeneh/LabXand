@@ -1,4 +1,6 @@
-﻿namespace LabXand.SharedKernel
+﻿namespace LabXand.SharedKernel;
+
+public interface IDomainEvent 
 {
-    public interface IDomainEvent { }
+    DateTime OccurredOn { get; }
 }
