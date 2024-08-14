@@ -5,6 +5,10 @@ using System.Linq.Expressions;
 
 namespace LabXand.Data.EF;
 
+public class ViolatedRestrictionException(object entity, List<IRestriction> restrictions) : Exception
+{
+    public List<IRestriction> Restrictions { get; } = restrictions;
+}
 public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) : IRepository<TAggregateRoot, TIdentifier>
     where TAggregateRoot : EntityBase<TIdentifier>, IAggregateRoot
     where TIdentifier : struct
@@ -24,16 +28,16 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
         if (trackedQuery)
         {
             trackingQuery ??= dbContext.Set<TAggregateRoot>();
-            return trackingQuery;
+            return ApplyRestriction(trackingQuery);
         }
-        noTrackingQuery ??= dbContext.Set<TAggregateRoot>()
+        noTrackingQuery ??= ApplyRestriction(dbContext.Set<TAggregateRoot>())
             .AsNoTracking()
             .AsSingleQuery();
         return noTrackingQuery;
     }
     IQueryable<TAggregateRoot> ApplyRestriction(IQueryable<TAggregateRoot> query)
     {
-        restrictions.ForEach(restriction => query = query.Where(restriction.Specification.Criteria));
+        restrictions.ForEach(restriction => query = query.Where(restriction.Specification.Criteria).TagWith(restriction.Title));
         return query;
     }
     public virtual void Add(TAggregateRoot domain) => dbContext.Set<TAggregateRoot>().Add(domain);
@@ -60,6 +64,18 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
         if (entity is null)
             ExceptionManager.EntityNotFound<TAggregateRoot, TIdentifier>(id);
         dbContext.Set<TAggregateRoot>().Remove(entity);
+    }
+
+    void CheckRestriction(TAggregateRoot entity, List<IRestriction<TAggregateRoot, TIdentifier>> restrictions)
+    {
+        List<IRestriction> violatedRestrictions = [];
+        restrictions.ForEach(restriction =>
+        {
+            if (!restriction.Specification.IsSatisfiedBy(entity))
+                violatedRestrictions.Add(restriction);
+        });
+        if (violatedRestrictions.Count > 0)
+            throw new ViolatedRestrictionException(violatedRestrictions);
     }
 
     public Task<int> CountAsync(IQueryable<TAggregateRoot> query, Expression<Func<TAggregateRoot, bool>> expression, CancellationToken cancellationToken)
