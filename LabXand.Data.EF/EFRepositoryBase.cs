@@ -7,6 +7,7 @@ namespace LabXand.Data.EF;
 
 public class ViolatedRestrictionException(object entity, List<IRestriction> restrictions) : Exception
 {
+    public object Entity { get; } = entity;
     public List<IRestriction> Restrictions { get; } = restrictions;
 }
 public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) : IRepository<TAggregateRoot, TIdentifier>
@@ -75,7 +76,7 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
                 violatedRestrictions.Add(restriction);
         });
         if (violatedRestrictions.Count > 0)
-            throw new ViolatedRestrictionException(violatedRestrictions);
+            throw new ViolatedRestrictionException(entity, violatedRestrictions);
     }
 
     public Task<int> CountAsync(IQueryable<TAggregateRoot> query, Expression<Func<TAggregateRoot, bool>> expression, CancellationToken cancellationToken)
