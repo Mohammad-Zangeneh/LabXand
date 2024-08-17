@@ -8,24 +8,32 @@ public static class QueryableExteder
 {
     public static IQueryable<TSource> Sort<TSource>(this IQueryable<TSource> source, List<SortItem> sortItems)
     {
-        sortItems.ForEach(item => source = CreateSortedQuery(source, item));
+        for (var i = 0; i < sortItems.Count; i++)
+            source = CreateSortedQuery(source, sortItems[i], i == 0);
         return source;
     }
 
-    private static IQueryable<TSource> CreateSortedQuery<TSource>(IQueryable<TSource> sources, SortItem sortItem)
+    private static IQueryable<TSource> CreateSortedQuery<TSource>(IQueryable<TSource> sources, SortItem sortItem, bool isFirst)
     {
-        bool isOrderableQuery = sources is IOrderedQueryable<TSource>;
-
-        string prefix = string.Format("{0}By", isOrderableQuery ? "Then" : "Order");
+        string prefix = string.Format("{0}By", isFirst ? "Order" : "Then");
         string command = string.Format("{0}{1}", prefix, sortItem.Direction == SortDirection.Descending ? "Descending" : "");
         var type = typeof(TSource);
         var parameter = Expression.Parameter(type, "p");
         var propertyAccess = ExpressionHelper.GetMemberExpression<TSource>(parameter, sortItem.SortFiledsSelector);
         var orderByExpression = Expression.Lambda(propertyAccess, parameter);
-        var resultExpression = Expression.Call(typeof(Queryable), command, new Type[] { type, ((PropertyInfo)propertyAccess.Member).PropertyType },
-                                      sources.Expression, Expression.Quote(orderByExpression));
+        var method = GetMethod(command)
+            .MakeGenericMethod(typeof(TSource), propertyAccess.Type);
+        var resultExpression = Expression.Call(method,
+                                      sources.Expression,
+                                      orderByExpression);
         return sources.Provider.CreateQuery<TSource>(resultExpression);
     }
+
+    static MethodInfo GetMethod(string command)
+      => typeof(Queryable).GetMethods()
+        .Where(m => m.Name.Equals(command) && m.GetParameters().Length == 2)
+        .Single();
+
     public static IQueryable<TSource> WhereIf<TSource>(this IQueryable<TSource> source, bool condition, Expression<Func<TSource, bool>> predicate)
         => condition ? source.Where(predicate) : source;
 
