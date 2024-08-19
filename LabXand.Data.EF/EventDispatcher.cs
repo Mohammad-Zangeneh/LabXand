@@ -5,7 +5,7 @@ namespace LabXand.Data.EF;
 
 public class EventDispatcher(IServiceProvider serviceProvider) : IEventDispatcher
 {
-    public async Task DispatchAsync(IDomainEvent domainEvent)
+    public async Task DispatchAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
         var eventHandlers = serviceProvider.GetServices<IEventHandler<IDomainEvent>>();
 
@@ -13,7 +13,7 @@ public class EventDispatcher(IServiceProvider serviceProvider) : IEventDispatche
         {
             if (handler.CanHandle(domainEvent))
             {
-                await handler.HandleAsync(domainEvent);
+                await handler.HandleAsync(domainEvent, cancellationToken);
             }
         }
     }
