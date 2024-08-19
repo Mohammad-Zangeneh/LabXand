@@ -11,20 +11,21 @@ public class DomainEventInterceptor(IEventDispatcher eventDispatcher) : SaveChan
         CancellationToken cancellationToken = default)
     {
         var entitiesWithEvents = eventData.Context!.ChangeTracker.Entries<EntityBase>()
-            .Where(e => e.Entity.DomainEvents.Count > 0)
-            .Select(e => e.Entity)
-            .ToList();
+        .Where(e => e.Entity.DomainEvents.Count > 0)
+        .Select(e => e.Entity)
+        .ToList();
 
         if (entitiesWithEvents.Count > 0)
         {
-            var domainEvents = entitiesWithEvents.SelectMany(e => e.DomainEvents).ToList();
+            var domainEvents = entitiesWithEvents.SelectMany(sm => sm.DomainEvents).ToList();
+
+            // clear the domain events before publish to prevent recursion
+            entitiesWithEvents.ForEach(entity => entity.ClearDomainEvents());
 
             foreach (var domainEvent in domainEvents)
             {
-                await eventDispatcher.DispatchAsync(domainEvent, cancellationToken);
+                await eventDispatcher.DispatchAsync(domainEvent);
             }
-
-            entitiesWithEvents.ForEach(entity => entity.ClearDomainEvents());
         }
 
         return await base.SavedChangesAsync(eventData, result, cancellationToken);
