@@ -7,13 +7,22 @@ public class EventDispatcher(IServiceProvider serviceProvider) : IEventDispatche
 {
     public async Task DispatchAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
-        var eventHandlers = serviceProvider.GetServices<IEventHandler<IDomainEvent>>();
+        var handlerType = typeof(IEventHandler<>).MakeGenericType(domainEvent.GetType());
+        var handlers = serviceProvider.GetServices(handlerType);
 
-        foreach (var handler in eventHandlers)
+        foreach (var handler in handlers)
         {
-            if (handler.CanHandle(domainEvent))
+            var canHandle = handlerType
+              .GetMethod(nameof(IEventHandler<IDomainEvent>.CanHandle))?
+              .Invoke(handler, [domainEvent]);
+
+            if (canHandle != null && Convert.ToBoolean(canHandle))
             {
-                await handler.HandleAsync(domainEvent, cancellationToken);
+                var handleAsyncMethod = handlerType.GetMethod(nameof(IEventHandler<IDomainEvent>.HandleAsync));
+                if (handleAsyncMethod != null)
+                {
+                    await (Task)handleAsyncMethod.Invoke(handler, [domainEvent, cancellationToken]);
+                }
             }
         }
     }
