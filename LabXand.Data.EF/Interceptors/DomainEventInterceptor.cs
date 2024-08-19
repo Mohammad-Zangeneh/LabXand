@@ -25,7 +25,7 @@ public class DomainEventInterceptor(IEventDispatcher eventDispatcher) : SaveChan
 
             foreach (var domainEvent in domainEvents)
             {
-                await eventDispatcher.DispatchAsync(domainEvent);
+                await eventDispatcher.DispatchAsync(domainEvent, cancellationToken);
             }
         }
 
