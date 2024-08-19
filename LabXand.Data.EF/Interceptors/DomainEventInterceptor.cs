@@ -10,10 +10,11 @@ public class DomainEventInterceptor(IEventDispatcher eventDispatcher) : SaveChan
         int result,
         CancellationToken cancellationToken = default)
     {
-        var entitiesWithEvents = eventData.Context!.ChangeTracker.Entries<EntityBase>()
-        .Where(e => e.Entity.DomainEvents.Count > 0)
-        .Select(e => e.Entity)
-        .ToList();
+        var entitiesWithEvents = eventData.Context!.ChangeTracker
+            .Entries<EntityBase>()
+            .Where(e => e.Entity.DomainEvents.Count > 0)
+            .Select(e => e.Entity)
+            .ToList();
 
         if (entitiesWithEvents.Count > 0)
         {
