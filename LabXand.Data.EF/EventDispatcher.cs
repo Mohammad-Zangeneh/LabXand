@@ -7,7 +7,7 @@ public class EventDispatcher(IServiceProvider serviceProvider) : IEventDispatche
 {
     public async Task DispatchAsync(IDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
-        var handlerType = typeof(IEventHandler).MakeGenericType(domainEvent.GetType());
+        var handlerType = typeof(IEventHandler<>).MakeGenericType(domainEvent.GetType());
         var handlers = serviceProvider.GetServices(handlerType).Cast<IEventHandler>();
 
         foreach (var handler in handlers)
