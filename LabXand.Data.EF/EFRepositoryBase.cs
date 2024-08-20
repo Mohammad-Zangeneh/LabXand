@@ -1,31 +1,36 @@
 ﻿using LabXand.SharedKernel;
 using LabXand.SharedKernel.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Linq.Expressions;
 
 namespace LabXand.Data.EF;
-
-public class ViolatedRestrictionException(object entity, List<IRestriction> restrictions) : Exception
-{
-    public object Entity { get; } = entity;
-    public List<IRestriction> Restrictions { get; } = restrictions;
-}
-public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) : IRepository<TAggregateRoot, TIdentifier>
-    where TAggregateRoot : EntityBase<TIdentifier>, IAggregateRoot
-    where TIdentifier : struct
+public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext, IServiceProvider serviceProvider) :
+    IRepository<TAggregateRoot, TIdentifier>
+        where TAggregateRoot : EntityBase<TIdentifier>, IAggregateRoot
+        where TIdentifier : struct
 {
     protected IQueryable<TAggregateRoot>? trackingQuery;
     protected IQueryable<TAggregateRoot>? noTrackingQuery;
     protected List<IRestriction<TAggregateRoot, TIdentifier>> restrictions = [];
+    protected bool restrictionIsInit = false;
     protected readonly DbContext dbContext = dbContext;
+    private readonly IServiceProvider serviceProvider = serviceProvider;
+
     internal INavigationPropertyUpdater<TAggregateRoot> NavigationPropertyUpdater { get; set; }
 
     public IQueryable<TAggregateRoot> Query => GetQuery();
 
-    public List<IRestriction<TAggregateRoot, TIdentifier>> Restrictions => restrictions;
+    public List<IRestriction<TAggregateRoot, TIdentifier>> Restrictions
+    {
+        get { return restrictions; }
+        set { restrictions = value; }
+    }
 
     public IQueryable<TAggregateRoot> GetQuery(bool trackedQuery = false)
     {
+        InitRestrictions();
+
         if (trackedQuery)
         {
             trackingQuery ??= dbContext.Set<TAggregateRoot>();
@@ -36,14 +41,29 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
             .AsSingleQuery();
         return noTrackingQuery;
     }
+
+    private void InitRestrictions()
+    {
+        if (restrictionIsInit)
+            return;
+        Restrictions = serviceProvider.GetServices<IRestriction<TAggregateRoot, TIdentifier>>().ToList();
+        restrictionIsInit = true;
+    }
+
     IQueryable<TAggregateRoot> ApplyRestriction(IQueryable<TAggregateRoot> query)
     {
         restrictions.ForEach(restriction => query = query.Where(restriction.Specification.Criteria).TagWith(restriction.Title));
         return query;
     }
-    public virtual void Add(TAggregateRoot domain) => dbContext.Set<TAggregateRoot>().Add(domain);
+    public virtual void Add(TAggregateRoot domain)
+    {
+        CheckRestriction(domain, RestrictionTypes.OnAdd);
+        dbContext.Set<TAggregateRoot>().Add(domain);
+    }
     public virtual void Edit(TAggregateRoot domain)
     {
+        CheckRestriction(domain, RestrictionTypes.OnEdit);
+
         if (NavigationPropertyUpdater is null)
         {
             dbContext.Attach(domain);
@@ -64,11 +84,14 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
         var entity = await dbContext.Set<TAggregateRoot>().FindAsync(id, cancellationToken);
         if (entity is null)
             ExceptionManager.EntityNotFound<TAggregateRoot, TIdentifier>(id);
+
+        CheckRestriction(entity, RestrictionTypes.OnDelete);
         dbContext.Set<TAggregateRoot>().Remove(entity);
     }
 
-    void CheckRestriction(TAggregateRoot entity, List<IRestriction<TAggregateRoot, TIdentifier>> restrictions)
+    void CheckRestriction(TAggregateRoot entity, RestrictionTypes restrictionType)
     {
+        var restrictions = Restrictions.Where(r => r.Type.Equals(restrictionType)).ToList();
         List<IRestriction> violatedRestrictions = [];
         restrictions.ForEach(restriction =>
         {
