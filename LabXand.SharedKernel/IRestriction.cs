@@ -4,7 +4,6 @@ public interface IRestriction
 {
     RestrictionTypes Type { get; }
     string Title { get; }
-    string Description { get; }
 }
 
 public interface IRestriction<T, TIdentifier> : IRestriction
@@ -12,4 +11,6 @@ public interface IRestriction<T, TIdentifier> : IRestriction
         where TIdentifier : struct
 {
     ISpecification<T, TIdentifier> Specification { get; }
+    string GetMessage(T entity);
+
 }

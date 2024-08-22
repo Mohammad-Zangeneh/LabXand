@@ -1,9 +1,9 @@
 ﻿namespace LabXand.SharedKernel;
-
+[Flags]
 public enum RestrictionTypes
 {
-    OnFetch,
-    OnAdd,
-    OnEdit,
-    OnDelete
+    OnFetch = 0,
+    OnAdd = 1,
+    OnEdit = 2,
+    OnDelete = 4
 }
