@@ -67,7 +67,8 @@ public class ListNavigationPropertyUpdater<TRoot, T, I>(INavigationPropertyUpdat
     {
         foreach (var item in currentNavigationPropertyValue)
         {
-            if (originalNavigationPropertyValue.Any(x => x.Id.Equals(item.Id)))
+            if (!item.Id.Equals(default(I)) &&
+                originalNavigationPropertyValue.Any(x => x.Id.Equals(item.Id)))
                 continue;
             navigationPropertyUpdaterCustomizer?.OnAfterAddEntity(rootCurrentValue, item).Invoke(rootCurrentValue, item);
             OnAdd(dbContext, originalNavigationPropertyValue, item);
