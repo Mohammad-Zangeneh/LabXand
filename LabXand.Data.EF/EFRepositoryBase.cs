@@ -7,17 +7,21 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace LabXand.Data.EF;
-public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext, IServiceProvider serviceProvider) :
+public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) :
     IRepository<TAggregateRoot, TIdentifier>
         where TAggregateRoot : EntityBase<TIdentifier>, IAggregateRoot
         where TIdentifier : struct
 {
+    public EFRepositoryBase(DbContext dbContext, IServiceProvider serviceProvider) : this(dbContext)
+    {
+        this.serviceProvider = serviceProvider;
+    }
     protected IQueryable<TAggregateRoot>? trackingQuery;
     protected IQueryable<TAggregateRoot>? noTrackingQuery;
     protected List<IRestriction<TAggregateRoot, TIdentifier>> restrictions = [];
     protected bool restrictionIsInit = false;
     protected readonly DbContext dbContext = dbContext;
-    private readonly IServiceProvider serviceProvider = serviceProvider;
+    private readonly IServiceProvider? serviceProvider;
 
     internal INavigationPropertyUpdater<TAggregateRoot> NavigationPropertyUpdater { get; set; }
 
@@ -48,7 +52,11 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext, 
     {
         if (restrictionIsInit)
             return;
-        Restrictions = serviceProvider.GetServices<IRestriction<TAggregateRoot, TIdentifier>>().ToList();
+
+        if (serviceProvider is null)
+            restrictions = [];
+        else
+            Restrictions = serviceProvider.GetServices<IRestriction<TAggregateRoot, TIdentifier>>().ToList();
         restrictionIsInit = true;
     }
 
