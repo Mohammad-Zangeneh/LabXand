@@ -88,9 +88,15 @@ public class EFRepositoryBase<TAggregateRoot, TIdentifier>(DbContext dbContext) 
         var original = query.FirstOrDefault(d => d.Id.Equals(domain.Id));
         if (original is null)
             ExceptionManager.EntityNotFound<TAggregateRoot, TIdentifier>(domain.Id);
-        NavigationPropertyUpdater.Update(dbContext, domain, original);
-
+        MapDomainEvents(domain, original!);
+        NavigationPropertyUpdater.Update(dbContext, domain, original!);
     }
+
+    private void MapDomainEvents(TAggregateRoot source, TAggregateRoot destination)
+    {
+        source.DomainEvents.ToList().ForEach(destination!.AddDomainEvent);
+    }
+
     public virtual async Task RemoveAsync(TIdentifier id, CancellationToken cancellationToken)
     {
         var entity = await dbContext.Set<TAggregateRoot>().FindAsync(id, cancellationToken);
