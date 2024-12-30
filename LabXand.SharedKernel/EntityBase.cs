@@ -6,7 +6,7 @@ namespace LabXand.SharedKernel
     {
         private readonly IList<IDomainEvent> _domainEvents = [];
         public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-        protected void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
+        public void AddDomainEvent(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
         public void ClearDomainEvents() => _domainEvents.Clear();
     }
 
