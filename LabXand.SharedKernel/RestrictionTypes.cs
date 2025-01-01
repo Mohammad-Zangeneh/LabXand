@@ -7,3 +7,10 @@ public enum RestrictionTypes
     OnEdit = 2,
     OnDelete = 4
 }
+
+public enum ApplyRestrictionTypes
+{
+    None,
+    Custom,
+    All
+}
