@@ -6,7 +6,6 @@ public interface IReadOnlyRepository<TAggregateRoot, TIdentifier>
     where TAggregateRoot : EntityBase<TIdentifier>, IAggregateRoot
     where TIdentifier : struct
 {
-    List<IRestriction<TAggregateRoot, TIdentifier>> Restrictions { get; protected set; }
     IQueryable<TAggregateRoot> Query { get; }
     IQueryable<TAggregateRoot> GetQuery(bool trackedQuery = false);
     Task<int> CountAsync(IQueryable<TAggregateRoot> query, Expression<Func<TAggregateRoot, bool>> expression, CancellationToken cancellationToken);

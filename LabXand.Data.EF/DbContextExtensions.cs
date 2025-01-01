@@ -7,7 +7,7 @@ public static class DbContextExtensions
     public static void SafeUpdate<TEntity>(this DbContext context, TEntity currentValue, TEntity originalValue)
         where TEntity : class
         => SafeUpdate(context, currentValue, originalValue, []);
-   
+
     public static void SafeUpdate<TEntity>(this DbContext context, TEntity currentValue, TEntity originalValue, List<string> constantFields)
         where TEntity : class
     {
