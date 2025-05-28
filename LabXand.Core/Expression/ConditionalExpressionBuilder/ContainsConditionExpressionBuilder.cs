@@ -8,8 +8,12 @@ namespace LabXand.Core
     {
         Expression IConditionalExpressionBuilder.Get(MemberExpression memberExpression, object value, Type valueType)
         {
-            ConstantExpression keyExpression = Expression.Constant(value, valueType);
+
             List<object> objectList = ((IEnumerable)value).Cast<object>().ToList();
+            if (objectList.Count == 0)
+                return Expression.Constant(true);
+
+            ConstantExpression keyExpression = Expression.Constant(value, valueType);
 
             var listType = typeof(List<>);
             Type expressionType = memberExpression.Type;
